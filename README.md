@@ -1,6 +1,6 @@
 # 目标
 
-在CDI引用中能够使用Spring bean
+在CDI应用中能够使用Spring bean
 
 # 用法
 
