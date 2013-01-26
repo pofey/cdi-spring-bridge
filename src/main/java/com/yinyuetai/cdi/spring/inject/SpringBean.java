@@ -1,6 +1,5 @@
 package com.yinyuetai.cdi.spring.inject;
 
-import com.caucho.config.inject.OwnerCreationalContext;
 import com.yinyuetai.cdi.spring.SpringLiteral;
 import org.springframework.beans.factory.ListableBeanFactory;
 
@@ -12,7 +11,6 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Named;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -137,28 +135,7 @@ public class SpringBean<T> implements Bean<T> {
 
 	@Override
 	public T create(CreationalContext<T> creationalContext) {
-		T instance = null;
-		Named anno = null;
-		Class parentClazz = ((OwnerCreationalContext) creationalContext).getParentValue().getClass();
-		Field[] fields = parentClazz.getDeclaredFields();
-		for (Field field : fields) {
-			anno = field.getAnnotation(Named.class);
-			if (anno != null) {
-				break;
-			}
-		}
-		if (anno != null) {
-			String beanName = anno.value();
-			if (beanName == null || "".equals(beanName))
-				instance = applicationContext.getBean(clazz);
-			else
-				instance = applicationContext.getBean(beanName, clazz);
-		} else {
-			instance = applicationContext.getBean(clazz);
-		}
-		if (instance == null) {
-			new RuntimeException("Not found spring bean: " + clazz);
-		}
+		T instance = applicationContext.getBean(clazz);
 		injectionTarget.inject(instance, creationalContext);
 		return instance;
 	}
